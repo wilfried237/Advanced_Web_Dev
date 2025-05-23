@@ -1,22 +1,19 @@
-# backend/Dockerfile
-FROM php:7.4-apache
+# Use the official PHP image
+FROM php:7.4-cli
 
-# Install necessary PHP extensions
-RUN docker-php-ext-install pdo pdo_sqlite
-
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
-
-# Copy backend files to the container
-COPY . /var/www/html
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    libsqlite3-dev \
+    && docker-php-ext-install pdo pdo_sqlite
 
 # Set the working directory
 WORKDIR /var/www/html
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Copy application files
+COPY . .
 
-# Install dependencies
-RUN composer install
+# Expose port (if needed)
+EXPOSE 9000
 
-EXPOSE 80
+# Start the application (Modify this as per your requirements)
+CMD ["php", "-S", "0.0.0.0:9000"]
